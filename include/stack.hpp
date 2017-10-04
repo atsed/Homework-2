@@ -1,69 +1,68 @@
-#include <iostream>
+#ifndef STACK_HPP
+#define STACK_HPP
 
+#include <iostream>
+#include <string.h>
 using namespace std;
 
-void stack_empty(size_t);
-void stack_push(size_t);
-void stack_pop(size_t);
-void stack_init();
-
 template <typename T>
-class stack
-{
-private:
-	T * array_;
-	size_t array_size_;
-	size_t count_;
+class Stack {
+    T * array_; 
+    size_t array_size_; 
+    size_t count_ = 0; 
 public:
-	stack();
-	stack(size_t);
-	size_t count() const;
-	void push(T const &);
-	bool empty() const;
-	T pop();
-	void printStack();
+    Stack() : array_size_(size_t(10)), array_(new T[10]) 
+    {}
+
+    Stack(size_t st) : array_size_(st), array_(new T[st])
+    {}
+	
+    T& operator [](int pos) 
+    {
+        return array_[pos];
+    }
+
+    size_t count() const 
+    {
+        return count_;
+    };
+
+    void push(T const &value) 
+    {
+        if (count_ == array_size_) 
+	{
+            T* new_array_ = new T[2*array_size_]; 
+            for (int i = 0; i < array_size_; ++i) 
+	    {
+                new_array_[i] = array_[i]; 
+            }
+            delete[] array_; 
+            array_ = new_array_; 
+        }
+        array_[count_] = value; 
+        ++count_; 
+    }
+
+    T pop() 
+    {
+        if (count_ == 0) 
+	{
+            throw runtime_error("!Стек пуст!"); 
+        }
+        --count_; 
+        return array_[count_];
+    }
+    bool empty() const 
+    {
+        if(count() == 0) return true;
+        return false;
+    }
+    
+    ~Stack<T>() 
+    {
+        delete[] array_; 
+    }
 };
 
-template <typename T>
-stack<T>::stack() : array_size_(2), array_(new T[array_size_]), count_(0) {}
-template <typename T>
-stack<T>::stack(size_t maxEl) : array_size_(maxEl), array_(new T[maxEl]), count_(0) {}
 
-template <typename T>
-void stack<T>::push(const T &value) {
-	if (count_ == array_size_) {
-		T* array_size2_ = new T[2 * array_size_];
-		for (size_t i = 0; i != array_size_; ++i) {
-			array_size2_[i] = array_[i];
-		}
-		delete[] array_;
-		array_ = array_size2_;
-	}
-	array_[count_++] = value;
-}
-
-template<typename T>
-T stack<T>::pop() {
-	if (count_ == 0) {
-		throw domain_error{ "*** ERROR - Stack empty ***" };
-	}
-	--count_;
-	return array_[count_];
-}
-
-template<typename T>
-size_t stack<T>::count() const {
-	return count_;
-}
-
-template<typename T>
-bool stack<T>::empty() const
-{
-	return count();
-}
-
-template<typename T>
-void stack<T>::printStack() {
-	for (int i = count_ - 1; i >= 0; i--)
-		cout << "[" << setw(4) << array_[i] << "]" << endl;
-}
+#endif
