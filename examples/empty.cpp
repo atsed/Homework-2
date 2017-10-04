@@ -1,5 +1,6 @@
 #include <iostream>
 #include "stack.hpp"
+
 using namespace std;
 
 void stackEmpty() 
